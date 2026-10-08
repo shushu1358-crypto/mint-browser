@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MINT Browser</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#111318;color:#eee}
+button,input{font:inherit}.browser{height:100vh;display:flex;flex-direction:column}.top{background:#202126;border-bottom:1px solid #383a42;padding:7px 9px}
+.tabs{height:32px;display:flex;gap:5px}.tab{display:flex;align-items:center;gap:8px;min-width:170px;max-width:260px;padding:0 10px;border-radius:8px 8px 0 0;background:#2b2d33;color:#bbb;cursor:pointer}.tab.active{background:#363941;color:#fff}.tab .title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tab button{border:0;background:none;color:#aaa;cursor:pointer}.newtab{width:32px;border:0;border-radius:8px;background:#2b2d33;color:#fff;font-size:20px;cursor:pointer}
+.toolbar{display:flex;gap:6px;align-items:center;margin-top:6px}.nav button,.tool{width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:#ddd;font-size:19px;cursor:pointer}.nav{display:flex;gap:2px}.nav button:hover,.tool:hover,.newtab:hover{background:#393b43}.address{height:35px;flex:1;display:flex;align-items:center;gap:7px;padding:0 12px;background:#303239;border:1px solid #44464f;border-radius:18px}.address input{flex:1;min-width:0;border:0;outline:0;background:none;color:#fff}.address button{border:0;background:none;color:#aaa;cursor:pointer}
+.content{position:relative;flex:1;background:#15171c}.frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}.home{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;background:radial-gradient(circle at 50% 30%,#28324c,#171a22 48%,#101217);z-index:3}.homebox{text-align:center;width:min(760px,92%)}.logo{font-size:64px;font-weight:800;letter-spacing:-4px;background:linear-gradient(90deg,#8db5ff,#c68bff);background-clip:text;color:transparent}.sub{color:#aeb2bf;margin:0 0 22px}.search{height:50px;display:flex;align-items:center;padding:0 8px 0 17px;border-radius:26px;background:#292c34;border:1px solid #454852}.search input{flex:1;border:0;outline:0;background:none;color:#fff}.search button{border:0;border-radius:20px;background:#7280ff;color:white;padding:8px 18px;cursor:pointer}.quick{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:16px}.quick button{border:1px solid #3e414a;background:#25282f;color:#ddd;border-radius:17px;padding:8px 15px;cursor:pointer}
+.app{position:absolute;inset:0;z-index:2;display:none}.youtube{background:#0f1013;color:#fff;flex-direction:column}.ytbar{height:58px;display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #292b31;background:#18191d}.ytbar input{flex:1;background:#292c33;border:1px solid #41434b;border-radius:18px;color:#fff;padding:9px 14px;outline:0}.ytbar button{border:0;border-radius:18px;background:#ff0033;color:#fff;padding:9px 17px;cursor:pointer}.ytarea{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}.ytbox{width:min(1100px,100%);height:min(620px,80vh);background:#000;border-radius:10px;overflow:hidden}.ytbox iframe{width:100%;height:100%;border:0}
+.discord{background:#1e1f22;grid-template-columns:72px 230px 1fr}.servers{background:#17181b;padding:10px 9px;overflow:auto}.server{width:52px;height:52px;border-radius:16px;margin:0 auto 9px;border:0;background:#2b2d31;color:#fff;font-weight:700;cursor:pointer}.server.active,.server:hover{border-radius:14px;background:#5865f2}.channels{background:#2b2d31;display:flex;flex-direction:column}.serverhead{height:55px;padding:16px;font-weight:700;border-bottom:1px solid #202124}.channel-list{padding:12px 8px;flex:1}.channel{width:100%;border:0;background:none;color:#aaa;text-align:left;padding:9px 11px;border-radius:6px;cursor:pointer}.channel.active,.channel:hover{background:#404249;color:#fff}.userbar{height:55px;background:#232428;padding:7px 10px;display:flex;align-items:center;gap:8px;font-size:13px}.avatar{width:34px;height:34px;border-radius:50%;background:#5865f2;display:grid;place-items:center;font-weight:700}.chat{display:flex;flex-direction:column;min-width:0}.chathead{height:55px;display:flex;align-items:center;padding:0 18px;border-bottom:1px solid #292a2e;font-weight:700}.chathead span{color:#8e9297;margin-right:7px}.messages{flex:1;overflow:auto;padding:18px}.msg{display:flex;gap:10px;padding:7px 0}.msgbody{min-width:0}.msgmeta{font-size:13px;font-weight:700}.msgtext{color:#dcddde;white-space:pre-wrap;overflow-wrap:anywhere}.composer{padding:12px 18px 18px}.composerbox{display:flex;background:#383a40;border-radius:9px;padding:5px}.composer input{flex:1;border:0;outline:0;background:none;color:#fff;padding:8px}.composer button{border:0;background:#5865f2;color:#fff;border-radius:7px;padding:7px 12px;cursor:pointer}
+@media(max-width:700px){.tab{min-width:120px}.discord{grid-template-columns:58px 170px 1fr}.server{width:42px;height:42px}.logo{font-size:48px}}
+</style>
+</head>
+<body>
+<div class="browser">
+<header class="top">
+<div class="tabs" id="tabs"></div>
+<div class="toolbar">
+<div class="nav"><button onclick="back()">←</button><button onclick="forward()">→</button><button onclick="reload()">↻</button></div>
+<div class="address"><span>⌕</span><input id="url" placeholder="URLまたは検索語"><button onclick="bookmark()">☆</button></div>
+<button class="tool" onclick="home()">⌂</button><button class="tool" onclick="newTab()">＋</button>
+</div>
+</header>
+<main class="content">
+<iframe id="frame" class="frame" allow="autoplay;fullscreen;picture-in-picture;clipboard-read;clipboard-write"></iframe>
+<section class="home" id="home"><div class="homebox">
+<div class="logo">MINT</div><p class="sub">MINT Browser</p>
+<div class="search"><input id="homeInput" placeholder="URLまたは検索語"><button onclick="go(homeInput.value)">検索</button></div>
+<div class="quick"><button onclick="youtube()">▶ YouTube</button><button onclick="discord()">💬 MINT Discord</button><button onclick="go('https://www.google.com')">Google</button></div>
+</div></section>
+
+<section class="app youtube" id="youtubeApp">
+<div class="ytbar"><b style="font-size:20px">▶ YouTube</b><input id="ytInput" placeholder="YouTube動画URL / 動画ID"><button onclick="playYT()">再生</button></div>
+<div class="ytarea"><div class="ytbox"><iframe id="ytFrame" allow="autoplay;fullscreen;picture-in-picture" allowfullscreen></iframe></div></div>
+</section>
+
+<section class="app discord" id="discordApp">
+<div class="servers" id="servers"></div>
+<div class="channels"><div class="serverhead" id="serverName">MINT Server</div><div class="channel-list"><button class="channel active"># general</button><button class="channel"># announcements</button><button class="channel"># gaming</button></div><div class="userbar"><div class="avatar">M</div><div><b>Mint User</b><br><span style="color:#888">MINT Client</span></div></div></div>
+<div class="chat"><div class="chathead"><span>#</span><span>general</span></div><div class="messages" id="messages"></div><div class="composer"><div class="composerbox"><input id="messageInput" placeholder="メッセージを送信"><button onclick="sendMessage()">送信</button></div></div></div>
+</section>
+</main>
+</div>
+<script>
+const HOME="mint://home";let tabs=[],active=0;
+const $=id=>document.getElementById(id);
+function newTab(){tabs.push({url:HOME,h:[],p:-1,title:"新しいタブ"});active=tabs.length-1;renderTabs();load()}
+function renderTabs(){const e=$("tabs");e.innerHTML="";tabs.forEach((t,i)=>{const d=document.createElement("div");d.className="tab "+(i===active?"active":"");d.onclick=()=>{active=i;renderTabs();load()};d.innerHTML='<span class="title"></span><button>×</button>';d.querySelector(".title").textContent=t.title;d.querySelector("button").onclick=x=>{x.stopPropagation();closeTab(i)};e.appendChild(d)});const n=document.createElement("button");n.className="newtab";n.textContent="+";n.onclick=newTab;e.appendChild(n)}
+function closeTab(i){if(tabs.length===1)tabs[0]={url:HOME,h:[],p:-1,title:"新しいタブ"};else{tabs.splice(i,1);if(active>=tabs.length)active=tabs.length-1}renderTabs();load()}
+function cur(){return tabs[active]}
+function norm(v){v=v.trim();if(!v)return HOME;if(/^https?:\/\//i.test(v))return v;if(/^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(v))return"https://"+v;return"https://www.google.com/search?q="+encodeURIComponent(v)}
+function go(v,push=true){const u=norm(v),t=cur();if(push){t.h=t.h.slice(0,t.p+1);t.h.push(u);t.p++}t.url=u;t.title=u===HOME?"新しいタブ":new URL(u).hostname;renderTabs();load()}
+function hideApps(){$("home").style.display="none";$("youtubeApp").style.display="none";$("discordApp").style.display="none";$("frame").style.display="block"}
+function load(){const t=cur();hideApps();$("url").value=t.url===HOME?"":t.url;if(t.url===HOME){home();return}if(t.url==="mint://youtube"){youtube();return}if(t.url==="mint://discord"){discord();return}if(/youtube\.com|youtu\.be/i.test(t.url)){const id=videoId(t.url);if(id){youtube();$("ytInput").value=t.url;playYT();return}}$("frame").src=t.url}
+function videoId(u){try{const x=new URL(u);let id=x.searchParams.get("v");if(!id&&x.hostname.includes("youtu.be"))id=x.pathname.slice(1).split("/")[0];if(!id&&x.pathname.startsWith("/shorts/"))id=x.pathname.split("/")[2];return id}catch(e){return null}}
+function youtube(){cur().url="mint://youtube";cur().title="YouTube";renderTabs();hideApps();$("frame").style.display="none";$("youtubeApp").style.display="flex";$("url").value="mint://youtube"}
+function playYT(){const raw=$("ytInput").value.trim();const id=videoId(raw)||(/^[A-Za-z0-9_-]{11}$/.test(raw)?raw:null);if(!id)return;cur().url="https://www.youtube.com/watch?v="+id;cur().title="YouTube · "+id;renderTabs();$("url").value=cur().url;$("ytFrame").src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?rel=0"}
+function discord(){cur().url="mint://discord";cur().title="MINT Discord";renderTabs();hideApps();$("frame").style.display="none";$("discordApp").style.display="grid";$("url").value="mint://discord";renderServers();renderMessages()}
+function home(){cur().url=HOME;hideApps();$("frame").style.display="none";$("home").style.display="flex";$("url").value="";renderTabs()}
+function back(){const t=cur();if(t.p>0){t.p--;t.url=t.h[t.p];load()}}
+function forward(){const t=cur();if(t.p<t.h.length-1){t.p++;t.url=t.h[t.p];load()}}
+function reload(){load()}
+function bookmark(){if(cur().url!==HOME)localStorage.setItem("mintBookmark",cur().url)}
+$("url").addEventListener("keydown",e=>{if(e.key==="Enter")go(e.target.value)});
+$("homeInput").addEventListener("keydown",e=>{if(e.key==="Enter")go(e.target.value)});
+function renderServers(){const e=$("servers");e.innerHTML="";["M","G","Y"].forEach((x,i)=>{const b=document.createElement("button");b.className="server "+(i===0?"active":"");b.textContent=x;b.onclick=()=>{$("serverName").textContent=["MINT Server","Gaming","Yamato"][i]};e.appendChild(b)})}
+function renderMessages(){const e=$("messages");e.innerHTML="";let a=JSON.parse(localStorage.getItem("mintDiscordMessages")||"[]");if(!a.length)a=[{u:"MINT",d:"MINT内Discordクライアントへようこそ！"}];a.forEach(m=>{const x=document.createElement("div");x.className="msg";x.innerHTML='<div class="avatar">'+m.u[0]+'</div><div class="msgbody"><div class="msgmeta"></div><div class="msgtext"></div></div>';x.querySelector(".msgmeta").textContent=m.u;x.querySelector(".msgtext").textContent=m.d;e.appendChild(x)});e.scrollTop=e.scrollHeight}
+function sendMessage(){const i=$("messageInput"),v=i.value.trim();if(!v)return;const a=JSON.parse(localStorage.getItem("mintDiscordMessages")||"[]");a.push({u:"Mint User",d:v});localStorage.setItem("mintDiscordMessages",JSON.stringify(a));i.value="";renderMessages()}
+$("messageInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendMessage()});
+newTab();
+</script>
+</body>
+</html>
